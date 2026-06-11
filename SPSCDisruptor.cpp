@@ -1,7 +1,9 @@
+#include "disruptor.h"
 #include <cstddef>
 
 template <typename T, std::size_t N>
 class SPSCDisruptor {
+	// Bitwise AND operation to compute modulo for power-of-2 sizes
     static_assert((N& (N - 1)) == 0, "N must be a power of 2");
     static_assert(N >= 2, "Buffer size must be at least 2");
 

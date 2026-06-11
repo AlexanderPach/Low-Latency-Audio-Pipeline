@@ -1,4 +1,5 @@
 // disruptor.hpp
+// Cache-Line Padding
 #pragma once
 
 #include <atomic>
