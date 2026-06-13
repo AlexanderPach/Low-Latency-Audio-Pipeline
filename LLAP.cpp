@@ -49,8 +49,8 @@ int main() {
         std::thread producerThread(runAudioProducer, std::ref(audioEngine.get_queue()));
 
         audioEngine.start();
-        std::cout << "\nAudio pipeline is LIVE. You should hear a smooth 440Hz tone.\n";
-        std::cout << "Press ENTER to gracefully stop the engine...\n\n";
+        std::cout << "\nAudio pipeline is LIVE. You should hear a 440Hz tone.\n";
+        std::cout << "Press ENTER to stop the engine...\n\n";
 
         std::cin.get();
 
