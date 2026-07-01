@@ -3,7 +3,7 @@
 This project is a high-performance C++ real-time audio streaming pipeline. It uses a custom-built, lock-free Single-Producer Single-Consumer (SPSC) ring buffer to send mathematically generated sound directly to the audio hardware without using traditional OS locks.
 Source for SPSCDisruptor: https://towardsdev.com/disruptor-style-queues-in-cpp-for-low-latency-software-835721d644dc.
 
-The idea of this project came to me after I was interested in what I was learning in my Operating Systems. 
+The idea of this project came to me after I was interested in what I was learning in my Operating Systems course. 
 
 ---
 
