@@ -2,7 +2,7 @@
 
 A real-time audio streaming pipeline in C++ that generates a sine wave and pushes it to your speakers through a lock-free SPSC (single-producer single-consumer) ring buffer I built from scratch, instead of relying on OS locks or a generic queue.
 
-I got the idea after covering concurrency and synchronization in my Operating Systems course and wanted to see how far I could push a "no locks, no allocations" design in practice.
+I got the idea after covering concurrency and synchronization in my Operating Systems course and wanted to see how far I could push this design in practice.
 
 Ring buffer design based on [this article on Disruptor-style queues in C++](https://towardsdev.com/disruptor-style-queues-in-cpp-for-low-latency-software-835721d644dc).
 
