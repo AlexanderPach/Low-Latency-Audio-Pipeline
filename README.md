@@ -1,40 +1,37 @@
 # Lock-Free Audio Pipeline
 
-This project is a high-performance C++ real-time audio streaming pipeline. It uses a custom-built, lock-free Single-Producer Single-Consumer (SPSC) ring buffer to send mathematically generated sound directly to the audio hardware without using traditional OS locks.
-Source for SPSCDisruptor: https://towardsdev.com/disruptor-style-queues-in-cpp-for-low-latency-software-835721d644dc.
+A real-time audio streaming pipeline in C++ that generates a sine wave and pushes it to your speakers through a lock-free SPSC (single-producer single-consumer) ring buffer I built from scratch, instead of relying on OS locks or a generic queue.
 
-The idea of this project came to me after I was interested in what I was learning in my Operating Systems course. 
+I got the idea after covering concurrency and synchronization in my Operating Systems course and wanted to see how far I could push a "no locks, no allocations" design in practice.
 
----
+Ring buffer design based on [this article on Disruptor-style queues in C++](https://towardsdev.com/disruptor-style-queues-in-cpp-for-low-latency-software-835721d644dc).
 
-## How It Works
+## How it works
 
-The application splits the work into two independent threads that talk to each other through the ring buffer:
+Two threads talk to each other through the ring buffer:
 
-1. **The Producer Thread:** Runs in the background, calculates a continuous math formula for a $440\text{ Hz}$ sine wave (a standard musical Note A), and pushes these raw data points into the buffer.
-2. **The Consumer Thread:** Managed automatically by the **Miniaudio** library. It constantly pulls data points out of the buffer and sends them straight to your speakers.
+- **Producer thread** — runs in the background, computes a 440 Hz sine wave (musical note A) sample by sample, and writes it into the buffer.
+- **Consumer thread** — owned by [miniaudio](https://miniaud.io/), which pulls samples out of the buffer and sends them to the audio device.
 
----
+## Why a custom ring buffer
 
-## Core Technical Features
+A `std::queue` with a mutex would work, but it isn't safe for real-time audio — a lock can stall the audio thread and cause audible glitches. `SPSCDisruptor` avoids that:
 
-Instead of using a generic queue, the `SPSCDisruptor` ring buffer was built from scratch with several low-level optimizations:
+- **Lock-free** — synchronization is done with `std::atomic` and acquire/release memory ordering instead of a mutex, so the audio thread never blocks.
+- **No false sharing** — the read/write indices are `alignas`-padded to a cache line so the two threads aren't invalidating each other's CPU cache on every access.
+- **Power-of-2 sizing** — buffer capacity is fixed to a power of 2 at compile time, so index wraparound is a bitwise `&` instead of a `%`.
+- **Zero runtime allocation** — backed by a fixed `std::array`, with samples constructed in place via placement `new`. No heap activity once audio starts.
 
-* **Lock-Free with Atomics:** Uses `std::atomic` variables with precise memory orders (`acquire`/`release`) to sync data between threads safely without ever pausing the CPU with a mutex.
-* **No False Sharing (`alignas`):** The internal tracking pointers are aligned to the CPU's hardware cache lines. This prevents the two threads from accidentally fighting over the same CPU cache memory.
-* **Bitwise Array Wrapping:** The buffer size is strictly restricted to a power of 2 at compile-time. This allows the code to replace slow division math (`%`) with an ultra-fast bitwise AND (`&`) operation to wrap indices instantly.
-* **Zero Runtime Memory Allocation:** The buffer uses a fixed-size `std::array` allocated once at startup. Data is constructed directly inside this memory using placement `new`, meaning no slow heap allocations occur while audio is playing.
+## Building
 
----
+Requires a C++20 compiler. Tested on Windows; should be portable to macOS/Linux with some changes to the audio backend (see below).
 
-## Building the Project
+### Visual Studio (MSVC)
 
-### Requirements
-* A compiler that supports C++20.
-* Works on Windows (MSVC), macOS, or Linux.
+1. Set the build configuration to **Release (x64)**.
+2. Project Properties → set C++ Language Standard to **C++20**.
+3. Ctrl+F5 to build and run. `winmm.lib` and `ole32.lib` are linked automatically for the Windows multimedia driver.
 
-### Visual Studio (MSVC) Setup
-1. Switch the build configuration at the top from **Debug** to **Release** (x64).
-2. Right-click the project -> Properties -> Set the C++ Language Standard to **C++20**.
-3. Press **Ctrl + F5** to run. The code automatically instructs Visual Studio to link the necessary Windows multimedia driver libraries (`winmm.lib` and `ole32.lib`).
-3a. Given that information, I can only confirm for it work on Windows. If you want to run it on Linux or macOS, you may need to adjust the audio code.
+### macOS / Linux
+
+Not yet tested. Miniaudio itself supports both platforms, but I haven't verified the build here — if you try it, I'd be curious to hear what breaks.
