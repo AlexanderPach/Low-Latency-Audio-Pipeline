@@ -1,0 +1,26 @@
+Paced queue simulation only; no audio device, sine generation, or hardware latency.
+Float sequence payload; generation timestamps use a preallocated side array.
+Age includes full-queue waiting and ends at simulated callback completion.
+Callback timing includes sequence checking and timestamp-copy instrumentation.
+Nearest-rank quantiles; no CPU pinning; eager producer yields on full.
+float_bytes=4 timestamp_bytes=8 int64_atomics_always_lock_free=1
+trial=1 order=0 capacity=256 queue=spsc
+trial=1 order=1 capacity=256 queue=mutex
+trial=1 order=2 capacity=65536 queue=mutex
+trial=1 order=3 capacity=65536 queue=spsc
+trial=2 order=0 capacity=65536 queue=spsc
+trial=2 order=1 capacity=65536 queue=mutex
+trial=2 order=2 capacity=256 queue=mutex
+trial=2 order=3 capacity=256 queue=spsc
+trial=3 order=0 capacity=256 queue=spsc
+trial=3 order=1 capacity=256 queue=mutex
+trial=3 order=2 capacity=65536 queue=mutex
+trial=3 order=3 capacity=65536 queue=spsc
+trial=4 order=0 capacity=65536 queue=spsc
+trial=4 order=1 capacity=65536 queue=mutex
+trial=4 order=2 capacity=256 queue=mutex
+trial=4 order=3 capacity=256 queue=spsc
+trial=5 order=0 capacity=256 queue=spsc
+trial=5 order=1 capacity=256 queue=mutex
+trial=5 order=2 capacity=65536 queue=mutex
+trial=5 order=3 capacity=65536 queue=spsc
