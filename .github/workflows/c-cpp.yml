@@ -8,16 +8,16 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
 
     steps:
     - uses: actions/checkout@v4
-    - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+    - name: Configure
+      run: cmake -S . -B out/build/ci -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBUILD_TESTING=ON
+    - name: Build
+      run: cmake --build out/build/ci --parallel 2
+    - name: Test
+      run: ctest --test-dir out/build/ci --output-on-failure

@@ -1,7 +1,7 @@
 ﻿# CMakeList.txt : CMake project for LLAP, include source and define
 # project specific logic here.
 #
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.12)
 
 # Enable Hot Reload for MSVC compilers if supported.
 if (POLICY CMP0141)
@@ -14,8 +14,34 @@ project ("LLAP")
 # Add source to this project's executable.
 add_executable (LLAP "LLAP.cpp" "LLAP.h" "disruptor.h" "SPSCDisruptor.cpp" "audio_engine.h")
 
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET LLAP PROPERTY CXX_STANDARD 20)
-endif()
+target_compile_features(LLAP PRIVATE cxx_std_20)
 
-# TODO: Add tests and install targets if needed.
+include(CTest)
+if (BUILD_TESTING)
+  find_package(Threads REQUIRED)
+
+  add_executable(spsc_disruptor_tests tests/spsc_disruptor_tests.cpp)
+  add_executable(audio_engine_tests tests/audio_engine_tests.cpp)
+
+  foreach(test_target IN ITEMS spsc_disruptor_tests audio_engine_tests)
+    target_compile_features(${test_target} PRIVATE cxx_std_20)
+    target_include_directories(${test_target} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+    target_link_libraries(${test_target} PRIVATE Threads::Threads)
+  endforeach()
+
+  # Exercise the real callback thread without accessing hardware or playing sound.
+  target_compile_definitions(audio_engine_tests PRIVATE
+    MA_ENABLE_ONLY_SPECIFIC_BACKENDS MA_ENABLE_NULL)
+  target_link_libraries(audio_engine_tests PRIVATE ${CMAKE_DL_LIBS})
+
+  foreach(test_case IN ITEMS empty fifo capacity wraparound move_only lifetime
+                             concurrent_small concurrent_audio)
+    add_test(NAME spsc.${test_case} COMMAND spsc_disruptor_tests ${test_case})
+    set_tests_properties(spsc.${test_case} PROPERTIES TIMEOUT 30)
+  endforeach()
+
+  foreach(test_case IN ITEMS consumes_samples restart destruction_running)
+    add_test(NAME audio.${test_case} COMMAND audio_engine_tests ${test_case})
+    set_tests_properties(audio.${test_case} PROPERTIES TIMEOUT 30)
+  endforeach()
+endif()
