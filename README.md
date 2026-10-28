@@ -24,7 +24,7 @@ A `std::queue` with a mutex would work, but it isn't safe for real-time audio â€
 
 ## Building
 
-Requires a C++20 compiler. Tested on Windows; should be portable to macOS/Linux with some changes to the audio backend (see below).
+Requires a C++20 compiler. Build with Visual Studio on Windows or CMake on Linux.
 
 ### Visual Studio (MSVC)
 
@@ -34,4 +34,29 @@ Requires a C++20 compiler. Tested on Windows; should be portable to macOS/Linux 
 
 ### macOS / Linux
 
-Not yet tested. Miniaudio itself supports both platforms, but I haven't verified the build here â€” if you try it, I'd be curious to hear what breaks.
+Linux builds and headless tests have been verified with GCC. Audio-device playback
+on Linux and macOS builds remain unverified. See the CMake commands below.
+
+## Tests
+
+The test suite uses CTest and the C++ standard library, with no downloads or extra
+test framework. It covers queue empty/full behavior, FIFO ordering, wraparound,
+move-only values, object lifetimes, and concurrent transfers with both a two-slot
+queue and the audio queue's 65,536-slot capacity. Audio-engine tests check callback
+consumption, stop/restart, and destruction during playback using miniaudio's silent
+backend. They do not need speakers or an audio server, and do not verify audible
+output or the generated sine wave.
+
+With a C++20 compiler and CMake 3.21 or newer, run from the repository root:
+
+```sh
+cmake -S . -B out/build/tests -DCMAKE_BUILD_TYPE=Debug -DBUILD_TESTING=ON
+cmake --build out/build/tests --parallel 2
+ctest --test-dir out/build/tests --output-on-failure
+```
+
+For a multi-configuration generator such as Visual Studio, add `--config Debug`
+to the build command and `-C Debug` to CTest. Checks remain enabled in Release
+builds. Use `ctest --test-dir out/build/tests -R '^spsc\.' --output-on-failure`
+to run only the queue tests, or configure with `-DBUILD_TESTING=OFF` to omit the
+test executables. CI builds and tests both Debug and Release on Linux.
