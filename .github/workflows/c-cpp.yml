@@ -16,7 +16,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Configure
-      run: cmake -S . -B out/build/ci -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBUILD_TESTING=ON
+      run: cmake -S . -B out/build/ci -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DBUILD_TESTING=ON -DLLAP_BUILD_BENCHMARKS=ON
     - name: Build
       run: cmake --build out/build/ci --parallel 2
     - name: Test

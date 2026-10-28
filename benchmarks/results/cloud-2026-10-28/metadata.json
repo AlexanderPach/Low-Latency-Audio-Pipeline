@@ -1,0 +1,85 @@
+{
+  "started_at_utc": "2026-10-28T07:53:14.646615+00:00",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "architecture": "x86_64",
+  "logical_cpu_count": 5,
+  "affinity": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "affinity_policy": "inherited; no pinning or real-time priority",
+  "git_commit": "2afcf827f5c35e8e1972b23630a7af1663c4e5c2",
+  "git_branch": "latency-benchmarks",
+  "tracked_changes": [
+    ".github/workflows/c-cpp.yml",
+    "CMakeLists.txt",
+    "README.md"
+  ],
+  "quick_smoke_only": false,
+  "source_sha256": {
+    "SPSCDisruptor.cpp": "4e3f66b693a708cc3bbf4d7068854b3ddf7b3c0e8ef640820f25f63ac6eff27a",
+    "disruptor.h": "4256876ae8b8d4c7ee8701be7acc5eaac0ede4a84ea6d5238663e0d6edeaede6",
+    "audio_engine.h": "b9bc6abad95674329b0ceeedd9216ebc688cb32899e74eb980d33844b7a96b5f",
+    "LLAP.cpp": "d7d0c9e745efe29aec306594e8bb44632bcb717e93ec3c752fe167203d46ea3e",
+    "CMakeLists.txt": "15632703327cbc4dcaa3d4371bae39c66a88c833acc187b1e16cb69b238b6cf0",
+    "benchmarks/audio_queue_simulation.cpp": "b614d6418302b5e57363182baf2a23cda87036901e3c2db55fb427f2fa7b1d1b",
+    "benchmarks/queue_benchmark.cpp": "879453bf40c9f1fa133088789b47e80555e5e90fa376b8a6b50e92c8865c8570",
+    "benchmarks/benchmark_queues.h": "807e798241fe83457fe07aa29937b4127ce97a22f7aa9f780e4790c46b4abc04",
+    "benchmarks/run_benchmarks.py": "0d6d949235d328383a46fd440a23c2430405a12f06cc6b85539d849a4e3fe6ab",
+    "benchmarks/summarize.py": "6c3d30e9a8387ca45f403d29e75de22aa3854f333d8604fae614f5df8ca830eb"
+  },
+  "binary_sha256": {
+    "queue_benchmark": "dec3a55d532ef1b2a59234758ef297c5a09c07abd7a43eb7ea93ca4ab9739fd6",
+    "audio_queue_simulation": "7fba151cc49b84f61ddd21b6d1ee878dff9e75cb362eb62e2f2a1cf41d2fddd8"
+  },
+  "runs": [
+    {
+      "command": [
+        "/workspace/Low-Latency-Audio-Pipeline/out/build/benchmarks/queue_benchmark",
+        "--trials",
+        "5",
+        "--iterations",
+        "5000000",
+        "--latency-samples",
+        "20000"
+      ],
+      "started_at_utc": "2026-10-28T07:53:14.657176+00:00",
+      "returncode": 0,
+      "completed_at_utc": "2026-10-28T07:53:22.642280+00:00"
+    },
+    {
+      "command": [
+        "/workspace/Low-Latency-Audio-Pipeline/out/build/benchmarks/audio_queue_simulation",
+        "--trials",
+        "5"
+      ],
+      "started_at_utc": "2026-10-28T07:53:22.642608+00:00",
+      "returncode": 0,
+      "completed_at_utc": "2026-10-28T07:55:02.859256+00:00"
+    }
+  ],
+  "notes": "Sequential workloads. No physical audio device used. Other system load is uncontrolled.",
+  "cpu_model": "AMD EPYC 9V74 80-Core Processor",
+  "cgroup_cpu.max": "400000 100000",
+  "cgroup_cpuset.cpus.effective": "0-4",
+  "cgroup_memory.max": "34359738368",
+  "compile_commands": [
+    {
+      "directory": "/workspace/Low-Latency-Audio-Pipeline/out/build/benchmarks",
+      "command": "/usr/bin/c++ -I/workspace/Low-Latency-Audio-Pipeline -O3 -DNDEBUG -std=gnu++20 -o CMakeFiles/queue_benchmark.dir/benchmarks/queue_benchmark.cpp.o -c /workspace/Low-Latency-Audio-Pipeline/benchmarks/queue_benchmark.cpp",
+      "file": "/workspace/Low-Latency-Audio-Pipeline/benchmarks/queue_benchmark.cpp",
+      "output": "CMakeFiles/queue_benchmark.dir/benchmarks/queue_benchmark.cpp.o"
+    },
+    {
+      "directory": "/workspace/Low-Latency-Audio-Pipeline/out/build/benchmarks",
+      "command": "/usr/bin/c++ -I/workspace/Low-Latency-Audio-Pipeline -O3 -DNDEBUG -std=gnu++20 -o CMakeFiles/audio_queue_simulation.dir/benchmarks/audio_queue_simulation.cpp.o -c /workspace/Low-Latency-Audio-Pipeline/benchmarks/audio_queue_simulation.cpp",
+      "file": "/workspace/Low-Latency-Audio-Pipeline/benchmarks/audio_queue_simulation.cpp",
+      "output": "CMakeFiles/audio_queue_simulation.dir/benchmarks/audio_queue_simulation.cpp.o"
+    }
+  ],
+  "compiler_version": "c++ (Debian 14.2.0-19) 14.2.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.",
+  "completed_at_utc": "2026-10-28T07:55:02.860621+00:00"
+}

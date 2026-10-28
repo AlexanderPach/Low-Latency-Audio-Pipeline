@@ -1,0 +1,25 @@
+queue_self_test=passed
+iterations=5000000
+latency_samples=20000
+trials=5
+warmups=1
+capacity=0 (0=256+65536)
+timeout_seconds_per_trial=30
+hardware_concurrency=5
+float_payload_bytes=4
+stamped_payload_bytes=16
+atomic_int64_is_always_lock_free=1
+atomic_int64_runtime_is_lock_free=1
+clock_is_steady=1
+clock_period_seconds=1/1000000000
+back_to_back_clock_median_ns=20
+back_to_back_clock_p99_ns=31
+clock_overhead_subtracted=false
+percentiles=nearest_rank; latency includes timestamp, enqueue, dequeue, polling and scheduling
+retry_policy=yield; no CPU affinity or real-time scheduling requested
+publish_retries=full returns; consume_retries=empty returns; ack_waits=failed ack polls
+throughput_includes=FIFO validation, checksum, retry/yield and worker scheduling
+throughput_timestamps=interval boundaries; serial timeout check every 4096 pairs; threaded timeout checks on waits
+order=alternating candidates by round, mode and capacity
+compiler=14.2.0
+NDEBUG=defined

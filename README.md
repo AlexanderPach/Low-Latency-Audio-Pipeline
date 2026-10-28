@@ -60,3 +60,16 @@ to the build command and `-C Debug` to CTest. Checks remain enabled in Release
 builds. Use `ctest --test-dir out/build/tests -R '^spsc\.' --output-on-failure`
 to run only the queue tests, or configure with `-DBUILD_TESTING=OFF` to omit the
 test executables. CI builds and tests both Debug and Release on Linux.
+
+## Measuring latency
+
+Queue speed, time spent waiting in the queue, and speaker latency are different
+measurements. At 44.1 kHz, a full 65,536-sample queue represents about **1.49 seconds
+of buffered audio**. The producer eagerly fills the queue, so fast synchronization
+alone does not establish low playback latency.
+
+Optional benchmarks compare the SPSC queue with an equally sized, preallocated
+mutex-protected ring. They measure operation cost, concurrent throughput, active
+handoff latency, and queue residence in a paced consumer simulation. See
+[the benchmark protocol and results](benchmarks/README.md) for commands, raw data,
+limitations, and the hardware loopback measurements needed for playback claims.
